@@ -12,7 +12,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.utcnow()
             self.updated_at = datetime.utcnow()
-            #models.storage.new(self)
+            models.storage.new(self)
         else:
             self.id = kwargs.get('id', str(uuid4()))
             self.created_at = datetime.strptime(kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
@@ -25,7 +25,7 @@ class BaseModel:
     def save(self):
         """Updates last updated variable"""
         self.updated_at = datetime.utcnow()
-        #models.storage.save()
+        models.storage.save()
 
     def to_dict(self):
         """Returns a dictionary representation of self"""
