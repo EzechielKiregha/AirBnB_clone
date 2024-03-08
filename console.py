@@ -93,6 +93,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, arg):
         """Updates an instance based on the class name and id"""
         args = arg.split()
+        print(args[0], args[1])
         if len(args) == 0:
             print("** class name missing **")
             return
@@ -116,8 +117,8 @@ class HBNBCommand(cmd.Cmd):
             attr_name = args[2]
             attr_value = args[3]
             if hasattr(obj, attr_name):
-                attr_type = type(getattr(obj, attr_name))
-                setattr(obj, attr_name, attr_type(attr_value))
+                attr_type = type(getattr(obj, attr_name))(attr_value)
+                setattr(obj, attr_name, attr_type)
                 obj.save()
 
 
