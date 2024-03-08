@@ -1,5 +1,6 @@
 import json
 import os
+from models.base_model import BaseModel
 
 
 class FileStorage:
@@ -9,6 +10,8 @@ class FileStorage:
 
     __objects = {}
     __file_path = 'file.json'
+    
+    classManes = ["BaseModel", "Place", "City", "Amenity", "Review"]
 
     def all(self):
         """Return all instances stored"""
