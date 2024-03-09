@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+"""
+It's the business layer
+that serves to store and retrieve objects using JSON format from a file
+"""
 import json
 import os
 from models.base_model import BaseModel
@@ -8,15 +13,14 @@ from models.user import User
 from models.state import State
 from models.review import Review
 
+
 class FileStorage:
     """
-    This class serves as an Object-Relation Mapping interface to store and retrieve objects using JSON format.
+    This class serves as an ORM interface to store and retrieve objects <- JSON
     """
 
     __objects = {}
     __file_path = 'file.json'
-    
-    classManes = ["BaseModel", "Place", "City", "Amenity", "Review"]
 
     def all(self):
         """Return all instances stored"""
@@ -29,12 +33,14 @@ class FileStorage:
 
     def save(self):
         """Serializes objects stored and persists them in a file"""
-        serialized = {key: value.to_dict() for key, value in FileStorage.__objects.items()}
+        serialized = {}
+        for key, value in FileStorage.__objects.items():
+            serialized[key] = value.to_dict()
         with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
             json.dump(serialized, f)
 
     def reload(self):
-        """reload method that update __objects dictionary 'deserialized from JSON file' """
+        """reload method 'deserialized from JSON file' """
         if os.path.isfile(FileStorage.__file_path):
             with open(FileStorage.__file_path, "r", encoding="utf-8") as js_f:
                 for key, obj in json.loads(js_f.read()).items():

@@ -29,9 +29,12 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """Do nothing on empty line."""
         pass
-    
+
     def do_create(self, arg):
-        """Create a new instance of BaseModel, saves it (to the JSON file) and prints the id"""
+        """
+        Create a new instance of BaseModel,
+        saves it (to the JSON file) and prints the id
+        """
         if not arg:
             print("** class name missing **")
             return
@@ -92,7 +95,11 @@ class HBNBCommand(cmd.Cmd):
                 if cls_name not in HBNBCommand.class_list:
                     print("** class doesn't exist **")
                     return
-                print([str(obj) for obj in storage.all().values() if type(obj).__name__ == cls_name])
+                printedObj = ""
+                for obj in storage.all().values():
+                    if type(obj).__name__ == cls_name:
+                        printedObj.append(str(obj))
+                print(printedObj)
             except IndexError:
                 print("** class name missing **")
 
@@ -111,8 +118,8 @@ class HBNBCommand(cmd.Cmd):
         elif len(args) == 2:
             print("** attribute name missing **")
         elif len(args) == 3:
-                print("** value missing **")
-                return
+            print("** value missing **")
+            return
         else:
             obj_id = args[1]
             obj_key = "{}.{}".format(cls_name, obj_id)
