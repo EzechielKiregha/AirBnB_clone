@@ -3,6 +3,12 @@
 import cmd
 from models import storage
 from models.base_model import BaseModel
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.user import User
+from models.state import State
+from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
@@ -66,7 +72,7 @@ class HBNBCommand(cmd.Cmd):
             obj_id = args[1]
             obj_key = "{}.{}".format(cls_name, obj_id)
             del storage.all()[obj_key]
-            self.save()
+            storage.save()
         except IndexError:
             if cls_name not in HBNBCommand.class_list:
                 print("** class doesn't exist **")
