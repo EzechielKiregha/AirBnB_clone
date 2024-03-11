@@ -134,6 +134,44 @@ class HBNBCommand(cmd.Cmd):
                 setattr(obj, attr_name, attr_type)
                 obj.save()
 
+    def default(self, arg):
+        """Override default method to handle class methods"""
+        if '.' in arg and arg[-1] == ')':
+            if arg.split('.')[0] not in storage.models:
+                print("** class doesn't exist **")
+                return
+            return self.handle_class_methods(arg)
+        return cmd.Cmd.default(self, arg)
+
+    def do_models(self, arg):
+        """Print all registered Models"""
+        print(*storage.models)
+
+    def handle_class_methods(self, arg):
+        """Handle Class Methods
+        <cls>.all(), <cls>.show() etc
+        """
+
+        printable = ("all(", "show(", "count(", "create(")
+        try:
+            val = eval(arg)
+            for x in printable:
+                if x in arg:
+                    print(val)
+                    break
+            return
+        except AttributeError:
+            print("** invalid method **")
+        except InstanceNotFoundError:
+            print("** no instance found **")
+        except TypeError as te:
+            field = te.args[0].split()[-1].replace("_", " ")
+            field = field.strip("'")
+            print(f"** {field} missing **")
+        except Exception as e:
+            print("** invalid syntax **")
+            pass
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
