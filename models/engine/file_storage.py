@@ -12,6 +12,8 @@ from models.place import Place
 from models.user import User
 from models.state import State
 from models.review import Review
+from .errors import *
+import datetime
 
 
 class FileStorage:
@@ -21,6 +23,8 @@ class FileStorage:
 
     __objects = {}
     __file_path = 'file.json'
+    models = ("BaseModel", "User", "Place", "State\
+", "City", "Amenity", "Review")
 
     def all(self):
         """Return all instances stored"""
@@ -32,40 +36,20 @@ class FileStorage:
         FileStorage.__objects[key] = obj
 
     def save(self):
-        """Serializes objects stored and persists them in a file"""
-        serialized = {}
-        for key, value in FileStorage.__objects.items():
-            serialized[key] = value.to_dict()
-        with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
-            json.dump(serialized, f)
-
-    def reload(self):
-        """reload method 'deserialized from JSON file' """
-        if os.path.isfile(FileStorage.__file_path):
-            with open(FileStorage.__file_path, "r", encoding="utf-8") as js_f:
-                for key, obj in json.loads(js_f.read()).items():
-                    obj = eval(obj['__class__'])(**obj)
-
-
-FileStorage.__objects[key] = obj
-
-
-def save(self):
-    """serializes objects stored and persist in file"""
-    serialized = {
-            key: val.to_dict()
-            for key, val in self.__objects.items()
-        }
-    with open(FileStorage.__file_path, "w") as f:
-        f.write(json.dumps(serialized))
+        """serializes objects stored and persist in file"""
+        serialized = {
+                key: val.to_dict()
+                for key, val in self.__objects.items()
+            }
+        with open(FileStorage.__file_path, "w") as f:
+            f.write(json.dumps(serialized))
 
     def reload(self):
         """de-serialize persisted objects"""
         try:
             deserialized = {}
             with open(FileStorage.__file_path, "r") as f:
-                deseri
-                alized = json.loads(f.read())
+                deserialized = json.loads(f.read())
             FileStorage.__objects = {
                 key:
                     eval(obj["__class__"])(**obj)
@@ -74,24 +58,21 @@ def save(self):
             # No need for error
             pass
 
-# to add after reload method and please respect the indentation
-
-
-def find_by_id(self, model, obj_id):
-    """Find and return an elemt of model by its id"""
-    F = FileStorage
-    if model not in F.models:
-        # Invalid Model Name
-        # Not yet Implemented
-        raise ModelNotFoundError(model)
-
-        key = model + "." + obj_id
-        if key not in F.__objects:
-            # invalid id
+    def find_by_id(self, model, obj_id):
+        """Find and return an elemt of model by its id"""
+        F = FileStorage
+        if model not in F.models:
+            # Invalid Model Name
             # Not yet Implemented
-            raise InstanceNotFoundError(obj_id, model)
+            raise ModelNotFoundError(model)
 
-        return F.__objects[key]
+            key = model + "." + obj_id
+            if key not in F.__objects:
+                # invalid id
+                # Not yet Implemented
+                raise InstanceNotFoundError(obj_id, model)
+
+            return F.__objects[key]
 
     def delete_by_id(self, model, obj_id):
         """Find and return an elemt of model by its id"""
