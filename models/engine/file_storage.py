@@ -66,13 +66,13 @@ class FileStorage:
             # Not yet Implemented
             raise ModelNotFoundError(model)
 
-            key = model + "." + obj_id
-            if key not in F.__objects:
-                # invalid id
-                # Not yet Implemented
-                raise InstanceNotFoundError(obj_id, model)
+        key = model + "." + obj_id
+        if key not in F.__objects:
+            # invalid id
+            # Not yet Implemented
+            raise InstanceNotFoundError(obj_id, model)
 
-            return F.__objects[key]
+        return F.__objects[key]
 
     def delete_by_id(self, model, obj_id):
         """Find and return an elemt of model by its id"""

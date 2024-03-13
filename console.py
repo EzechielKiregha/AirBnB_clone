@@ -9,6 +9,7 @@ from models.place import Place
 from models.user import User
 from models.state import State
 from models.review import Review
+from models.engine.errors import *
 
 
 class HBNBCommand(cmd.Cmd):
@@ -98,7 +99,7 @@ class HBNBCommand(cmd.Cmd):
                 printedObj = ""
                 for obj in storage.all().values():
                     if type(obj).__name__ == cls_name:
-                        printedObj.append(str(obj))
+                        printedObj += str(obj)
                 print(printedObj)
             except IndexError:
                 print("** class name missing **")
