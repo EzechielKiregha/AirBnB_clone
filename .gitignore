@@ -1,3 +1,6 @@
 test_save_reload_base_model.py
+test_save_reload_user.py
 file.json
 .console.py.swp
+AUTHORS
+README.md

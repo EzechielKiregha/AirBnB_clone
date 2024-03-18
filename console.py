@@ -3,6 +3,13 @@
 import cmd
 from models import storage
 from models.base_model import BaseModel
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.user import User
+from models.state import State
+from models.review import Review
+from models.engine.errors import *
 
 
 class HBNBCommand(cmd.Cmd):
@@ -23,9 +30,12 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """Do nothing on empty line."""
         pass
-    
+
     def do_create(self, arg):
-        """Create a new instance of BaseModel, saves it (to the JSON file) and prints the id"""
+        """
+        Create a new instance of BaseModel,
+        saves it (to the JSON file) and prints the id
+        """
         if not arg:
             print("** class name missing **")
             return
@@ -66,7 +76,7 @@ class HBNBCommand(cmd.Cmd):
             obj_id = args[1]
             obj_key = "{}.{}".format(cls_name, obj_id)
             del storage.all()[obj_key]
-            self.save()
+            storage.save()
         except IndexError:
             if cls_name not in HBNBCommand.class_list:
                 print("** class doesn't exist **")
@@ -86,13 +96,18 @@ class HBNBCommand(cmd.Cmd):
                 if cls_name not in HBNBCommand.class_list:
                     print("** class doesn't exist **")
                     return
-                print([str(obj) for obj in storage.all().values() if type(obj).__name__ == cls_name])
+                printedObj = ""
+                for obj in storage.all().values():
+                    if type(obj).__name__ == cls_name:
+                        printedObj += str(obj)
+                print(printedObj)
             except IndexError:
                 print("** class name missing **")
 
     def do_update(self, arg):
         """Updates an instance based on the class name and id"""
         args = arg.split()
+        print(args[0], args[1])
         if len(args) == 0:
             print("** class name missing **")
             return
@@ -104,8 +119,8 @@ class HBNBCommand(cmd.Cmd):
         elif len(args) == 2:
             print("** attribute name missing **")
         elif len(args) == 3:
-                print("** value missing **")
-                return
+            print("** value missing **")
+            return
         else:
             obj_id = args[1]
             obj_key = "{}.{}".format(cls_name, obj_id)
@@ -116,9 +131,47 @@ class HBNBCommand(cmd.Cmd):
             attr_name = args[2]
             attr_value = args[3]
             if hasattr(obj, attr_name):
-                attr_type = type(getattr(obj, attr_name))
-                setattr(obj, attr_name, attr_type(attr_value))
+                attr_type = type(getattr(obj, attr_name))(attr_value)
+                setattr(obj, attr_name, attr_type)
                 obj.save()
+
+    def default(self, arg):
+        """Override default method to handle class methods"""
+        if '.' in arg and arg[-1] == ')':
+            if arg.split('.')[0] not in storage.models:
+                print("** class doesn't exist **")
+                return
+            return self.handle_class_methods(arg)
+        return cmd.Cmd.default(self, arg)
+
+    def do_models(self, arg):
+        """Print all registered Models"""
+        print(*storage.models)
+
+    def handle_class_methods(self, arg):
+        """Handle Class Methods
+        <cls>.all(), <cls>.show() etc
+        """
+
+        printable = ("all(", "show(", "count(", "create(")
+        try:
+            val = eval(arg)
+            for x in printable:
+                if x in arg:
+                    print(val)
+                    break
+            return
+        except AttributeError:
+            print("** invalid method **")
+        except InstanceNotFoundError:
+            print("** no instance found **")
+        except TypeError as te:
+            field = te.args[0].split()[-1].replace("_", " ")
+            field = field.strip("'")
+            print(f"** {field} missing **")
+        except Exception as e:
+            print("** invalid syntax **")
+            pass
 
 
 if __name__ == '__main__':

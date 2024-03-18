@@ -1,6 +1,14 @@
+#!/usr/bin/python3
+
+"""
+Defines the BaseModel class which is the BaseClass
+that serves for parents to other classes
+"""
+
 from uuid import uuid4
 from datetime import datetime
 import models
+
 
 class BaseModel:
     """Base class for all our classes"""
@@ -15,12 +23,15 @@ class BaseModel:
             models.storage.new(self)
         else:
             self.id = kwargs.get('id', str(uuid4()))
-            self.created_at = datetime.strptime(kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
-            self.updated_at = datetime.strptime(kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
+            self.created_at = self.parse_datetime(kwargs['created_at'])
+            self.updated_at = self.parse_datetime(kwargs['updated_at'])
+
+    def parse_datetime(self, datetime_str):
+        return datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%S.%f')
 
     def __str__(self):
         """Override str representation of self"""
-        return "[{}] ({}) {}".format(type(self).__name__, self.id, self.__dict__)
+        return f"[{type(self).__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """Updates last updated variable"""
